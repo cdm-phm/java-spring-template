@@ -21,7 +21,7 @@ import java.util.Objects;
  * {{ line | safe}}{% endfor %}{% if schema.examples() %}
  * Examples: {{schema.examples() | examplesToString | safe}}{% endif %}
  */{% endif %}
-@Generated(value="com.asyncapi.generator.template.spring", date="{{''|currentTime }}")
+@Generated(value="com.asyncapi.generator.template.spring"{% if params.generateTimestamp === 'true' %}, date="{{''|currentTime }}"{%- endif %})
 public class {{schemaName | camelCase | upperFirst}} {
     {% for propName, prop in schema.properties() %}
         {%- set isRequired = propName | isRequired(schema.required()) %}
@@ -147,7 +147,7 @@ public class {{schemaName | camelCase | upperFirst}} {
     {%- if prop.deprecated() %}@Deprecated{% endif %}
     {%- if prop.minLength() or prop.maxLength() or prop.maxItems() or prop.minItems() %}@Size({% if prop.minLength() or prop.minItems() %}min = {{prop.minLength()}}{{prop.minItems()}}{% endif %}{% if prop.maxLength() or prop.maxItems() %}{% if prop.minLength() or prop.minItems() %},{% endif %}max = {{prop.maxLength()}}{{prop.maxItems()}}{% endif %}){% endif %}    
     {%- if prop.pattern() %}@Pattern(regexp="{{prop.pattern() | addBackSlashToPattern}}"){% endif %}
-    {%- if prop.type() == 'number' and (prop.format() == 'float' or prop.format() == 'double') %}
+    {%- if prop.type() === 'number' and (prop.format() === 'float' or prop.format() === 'double') %}
         {%- if prop.minimum() %}@DecimalMin({{prop.minimum()}}, inclusive = true){% endif %}{%- if prop.exclusiveMinimum() %}@DecimalMin({{prop.exclusiveMinimum()}}, inclusive = false){% endif %}
         {%- if prop.maximum() %}@DecimalMax({{prop.maximum()}}, inclusive = true){% endif %}{%- if prop.exclusiveMaximum() %}@DecimalMax({{prop.exclusiveMaximum()}}, inclusive = false){% endif %}    
     {%- else %}
